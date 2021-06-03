@@ -13,7 +13,6 @@ data:
       location: Palo-Alto
       env: production
 
-
   delivery-app.yml: |
     server:
       port: 50054
@@ -23,7 +22,6 @@ data:
     
     applicationTagsYamlFile: "/conf/delivery-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
-
 
   inventory.conf: |
     {
@@ -37,7 +35,7 @@ data:
     
     	"proxyHost":              "tacocat-wavefront-proxy",
     	"proxyPort":              2878,
-    	"proxyDistributionsPort": 40000,
+    	"proxyDistributionsPort": 2878,
     	"proxyTracingPort":       30000,
     
     	"simFailCheckout":  0.02,
@@ -56,7 +54,6 @@ data:
     customTags:
       location: Palo-Alto
       env: production
-
 
   notification-app.yml: |
     server:
@@ -80,12 +77,10 @@ data:
       location: Palo-Alto
       env: production
 
-
   packaging-app.yaml: |
     grpcPort: 50053
     applicationTagsYamlFile: "/conf/packaging-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
-
 
   payments-app-tags.yaml: |
     application: tacocat
@@ -118,21 +113,6 @@ data:
     applicationTagsYamlFile: "/conf/printing-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
 
-
-  shop-ui-app-tags.yaml: |
-    application: tacocat
-    cluster: to-cp-demo-cluster-12
-    service: shop-ui
-    shard: blue
-    customTags:
-      location: eks
-      env: production
-    server:
-      applicationConnectors:
-      - type: http
-      port: 8080
-
-
   shopping-app-tags.yaml: |
     application: tacocat
     cluster: bare-metal
@@ -141,7 +121,6 @@ data:
     customTags:
       location: Palo-Alto
       env: production
-
 
   shopping-app.yaml: |
     server:
@@ -165,6 +144,18 @@ data:
     applicationTagsYamlFile: "/conf/shopping-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
 
+  shop-ui-app-tags.yaml: |
+    application: tacocat
+    cluster: to-cp-demo-cluster-12
+    service: shop-ui
+    shard: blue
+    customTags:
+      location: eks
+      env: production
+    server:
+      applicationConnectors:
+      - type: http
+      port: 8080
 
   styling-app-tags.yaml: |
     application: tacocat
@@ -174,7 +165,6 @@ data:
     customTags:
       location: Palo-Alto
       env: production
-
 
   styling-app.yaml: |
     server:
@@ -198,7 +188,6 @@ data:
     applicationTagsYamlFile: "/conf/styling-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
 
-
   warehouse-app-tags.yaml: |
     application: tacocat
     cluster: bare-metal
@@ -213,7 +202,7 @@ data:
     reportingMechanism: proxy
     proxyHost: tacocat-wavefront-proxy
     proxyMetricsPort: 2878
-    proxyDistributionsPort: 2878
+    proxyDistributionsPort: 40000
     proxyTracingPort: 30000
     
     reportTraces: true

@@ -1,4 +1,5 @@
-ARCH?=amd64
+#ARCH?=amd64
+ARCH?=arm64
 OUT_DIR?=./target
 GOLANG_VERSION?=1.11
 

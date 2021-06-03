@@ -1,3 +1,5 @@
-FROM openjdk:8-jre
-
-COPY styling.jar /
+FROM ubuntu:20.04
+RUN apt-get update
+RUN apt-get install openjdk-8-jre-headless -y
+ADD styling.jar /
+CMD java -jar styling.jar

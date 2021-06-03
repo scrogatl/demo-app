@@ -1,5 +1,6 @@
 #! /bin/zsh
 
+REPOSITORY_PREFIX=dambott/arm64
 cd $1
 
 if [ -z "${REPOSITORY_PREFIX}" ]
@@ -10,8 +11,8 @@ else
 		./prepare.sh
 	fi
 
-	docker build . -t $REPOSITORY_PREFIX/$1
-	docker push $REPOSITORY_PREFIX/$1
+	docker build . -t $REPOSITORY_PREFIX$1
+	docker push $REPOSITORY_PREFIX$1
 
 	if [[ -f clean.sh ]]; then
 		./clean.sh

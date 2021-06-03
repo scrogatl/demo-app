@@ -1,0 +1,39 @@
+*.class
+
+.DS_Store
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.swp
+*.deb
+*.rpm
+*.releaseBackup
+release.properties
+
+pkg/build
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+.idea/
+*.iml
+
+**/target/
+
+proxy/unitTest*
+
+# Eclipse files
+.classpath
+.project
+.settings/
+
+test/buffer.*
+test/proxy*.out
+test/.wavefront_id
+
+dependency-reduced-pom.xml
+

@@ -8,7 +8,7 @@ metadata:
   name: printing-blue
   namespace: tacocat
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: tacocat
@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: printing
-        image: dambott/printing:latest
+        image: dambott/arm64printing:latest
         imagePullPolicy: Always
         command:
         - "java"
@@ -58,7 +58,7 @@ metadata:
   name: printing-green
   namespace: tacocat
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: tacocat
@@ -73,7 +73,7 @@ spec:
     spec:
       containers:
         - name: printing
-          image: dambott/printing:latest
+          image: dambott/arm64printing:latest
           imagePullPolicy: Always
           command:
             - "java"

@@ -1,0 +1,86 @@
+counters:
+  - pattern: "counterWithValue %{NUMBER:value}%{GREEDYDATA:extra}"
+    metricName: "counterWithValue"
+  - pattern: "plainCounter"
+    metricName: "plainCounter"
+  - pattern: "dynamicCounter %{WORD:name} %{NUMBER:type} done"
+    metricName: "dynamic_%{name}_%{type}"
+  - pattern: "%{MYPATTERN}"
+    metricName: "customPatternCounter"
+  - pattern: "operation %{WORD:op} took %{NUMBER:value} seconds in DC=%{WORD:dc}.*AZ=%{WORD:az}"
+    metricName: "%{op}.totalSeconds"
+    tagKeys:
+      - "theDC"
+      - "theAZ"
+    tagValueLabels:
+      - "dc"
+      - "az"
+  - pattern: "operation TagValue %{WORD:op} took %{NUMBER:value} seconds in DC=%{WORD:dc}.*AZ=%{WORD:az}"
+    metricName: "TagValue.%{op}.totalSeconds"
+    tagKeys:
+      - "theDC"
+      - "theAZ"
+      - "static"
+      - "noMatch"
+    tagValues:
+      - "%{dc}"
+      - "az-%{az}"
+      - "value"
+      - "aa%{q}bb"
+  - pattern: "operation %{WORD:op} on host %{WORD:hostname} took %{NUMBER:value} seconds"
+    metricName: "Host.%{op}.totalSeconds"
+    hostName: "%{hostname}.acme.corp"
+    tagKeys:
+      - "static"
+    tagValues:
+      - "value"
+  - pattern: "%{COMBINEDAPACHELOG}"
+    metricName: "apacheBytes"
+    valueLabel: "bytes"
+  - pattern: "%{COMBINEDAPACHELOG}"
+    metricName: "apacheBytes2"
+    valueLabel: "bytes"
+
+gauges:
+  - pattern: "gauges %{NUMBER:value}"
+    metricName: "myGauge"
+  - pattern: "%{COMBINEDAPACHELOG}"
+    metricName: "apacheStatus"
+    valueLabel: "response"
+  - pattern: '%{LOGLEVEL}: \[%{NUMBER:port}\] %{GREEDYDATA} points attempted: %{NUMBER:pointsAttempted}'
+    metricName: "wavefrontPointsSent.%{port}"
+    valueLabel: "pointsAttempted"
+  - pattern: 'pingSSO\|(\s*%{DATA:datetime}\s*)\|(\s*%{DATA:event}\s*)\|(\s*%{DATA:subject}\s*)\|(\s*%{DATA:ip}\s*)\|(\s*%{DATA:app}\s*)\|(\s*%{DATA:connectionid}\s*)\|(\s*%{DATA:protocol}\s*)\|(\s*%{DATA:host}\s*)\|(\s*%{DATA:role}\s*)\|(\s*%{DATA:status}\s*)\|(\s*%{DATA:adapterid}\s*)\|(\s*%{DATA:description}\s*)\|(\s*%{NUMBER:responsetime}\s*)'
+    metricName: 'pingSSO'
+    valueLabel: 'responsetime'
+    tagKeys:
+      - "event"
+      - "subject"
+      - "ip"
+      - "app"
+      - "connectionid"
+      - "protocol"
+      - "sso_host"
+      - "role"
+      - "status"
+      - "adapterid"
+      - "description"
+    tagValueLabels:
+      - "event"
+      - "subject"
+      - "ip"
+      - "app"
+      - "connectionid"
+      - "protocol"
+      - "host"
+      - "role"
+      - "status"
+      - "adapterid"
+      - "description"
+
+histograms:
+  - pattern: "histo %{NUMBER:value}"
+    metricName: "myHisto"
+
+additionalPatterns:
+  - "MYPATTERN %{WORD:myword} and %{NUMBER:value}"

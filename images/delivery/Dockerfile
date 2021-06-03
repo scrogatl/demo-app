@@ -1,3 +1,6 @@
-FROM openjdk:8-jre
-
-COPY delivery.jar /
+FROM ubuntu:20.04
+RUN apt-get update
+#RUN apt-get install openjdk-8-jre -y
+RUN apt-get install openjdk-8-jre-headless -y
+ADD delivery.jar /
+CMD java -jar delivery.jar
