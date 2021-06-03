@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: styling
-        image: <add your repository here>/styling:latest
+        image: dambott/styling:latest
         imagePullPolicy: Always
         command:
         - "java"
@@ -77,7 +77,7 @@ spec:
     spec:
       containers:
         - name: styling
-          image: <add your repository here>/styling:latest
+          image: dambott/styling:latest
           imagePullPolicy: Always
           command:
             - "java"

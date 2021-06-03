@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: payments
-        image: <add your repository here>/payments:latest
+        image: dambott/payments:latest
         imagePullPolicy: Always
         command:
         - "dotnet"
@@ -73,7 +73,7 @@ spec:
     spec:
       containers:
         - name: payments
-          image: <add your repository here>/payments:latest
+          image: dambott/payments:latest
           imagePullPolicy: Always
           command:
             - "dotnet"

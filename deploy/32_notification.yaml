@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: notification
-        image: <add your repository here>/notification:latest
+        image: dambott/notification:latest
         imagePullPolicy: Always 
         command:
         - "java"
@@ -73,7 +73,7 @@ spec:
     spec:
       containers:
         - name: notification
-          image: <add your repository here>/notification:latest
+          image: dambott/notification:latest
           imagePullPolicy: Always
           command:
             - "java"

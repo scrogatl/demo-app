@@ -6,12 +6,13 @@ metadata:
 data:
   delivery-app-tags.yaml: |
     application: tacocat
-    cluster: kerrupt
+    cluster: bare-metal
     service: delivery
     shard: blue
     customTags:
       location: Palo-Alto
       env: production
+
 
   delivery-app.yml: |
     server:
@@ -23,11 +24,12 @@ data:
     applicationTagsYamlFile: "/conf/delivery-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
 
+
   inventory.conf: |
     {
     	"application": "tacocat",
     	"service":     "inventory",
-    	"cluster":     "kerrupt",
+    	"cluster":     "bare-metal",
     	"shard":       "blue",	
     
     	"inventoryHost": "0.0.0.0:60001",
@@ -45,14 +47,16 @@ data:
     	"simDelayCpuPct":   0.4
     }
 
+
   notification-app-tags.yaml: |
     application: tacocat
-    cluster: kerrupt
+    cluster: bare-metal
     service: notification
     shard: blue
     customTags:
       location: Palo-Alto
       env: production
+
 
   notification-app.yml: |
     server:
@@ -69,21 +73,23 @@ data:
 
   packaging-app-tags.yaml: |
     application: tacocat
-    cluster: kerrupt
+    cluster: bare-metal
     service: packaging
     shard: blue
     customTags:
       location: Palo-Alto
       env: production
 
+
   packaging-app.yaml: |
     grpcPort: 50053
     applicationTagsYamlFile: "/conf/packaging-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
 
+
   payments-app-tags.yaml: |
     application: tacocat
-    cluster: kerrupt
+    cluster: bare-metal
     service: payments
     shard: blue
     customTags:
@@ -99,7 +105,7 @@ data:
 
   printing-app-tags.yaml: |
     application: tacocat
-    cluster: kerrupt
+    cluster: bare-metal
     service: printing
     shard: blue
     customTags:
@@ -112,14 +118,30 @@ data:
     applicationTagsYamlFile: "/conf/printing-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
 
+
+  shop-ui-app-tags.yaml: |
+    application: tacocat
+    cluster: to-cp-demo-cluster-12
+    service: shop-ui
+    shard: blue
+    customTags:
+      location: eks
+      env: production
+    server:
+      applicationConnectors:
+      - type: http
+      port: 8080
+
+
   shopping-app-tags.yaml: |
     application: tacocat
-    cluster: kerrupt
+    cluster: bare-metal
     service: shopping
     shard: blue
     customTags:
       location: Palo-Alto
       env: production
+
 
   shopping-app.yaml: |
     server:
@@ -143,27 +165,16 @@ data:
     applicationTagsYamlFile: "/conf/shopping-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
 
-  shop-ui-app-tags.yaml: |
-    application: tacocat
-    cluster: to-cp-demo-cluster-12
-    service: shop-ui
-    shard: blue
-    customTags:
-      location: eks
-      env: production
-    server:
-      applicationConnectors:
-      - type: http
-      port: 8080
 
   styling-app-tags.yaml: |
     application: tacocat
-    cluster: kerrupt
+    cluster: bare-metal
     service: styling
     shard: blue
     customTags:
       location: Palo-Alto
       env: production
+
 
   styling-app.yaml: |
     server:
@@ -187,9 +198,10 @@ data:
     applicationTagsYamlFile: "/conf/styling-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
 
+
   warehouse-app-tags.yaml: |
     application: tacocat
-    cluster: kerrupt
+    cluster: bare-metal
     service: warehouse
     shard: blue
     customTags:

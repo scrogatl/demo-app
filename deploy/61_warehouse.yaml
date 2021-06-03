@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: warehouse
-        image: <add your repository here>/warehouse:latest
+        image: dambott/warehouse:latest
         imagePullPolicy: Always
         command:
         - "python3"
@@ -73,7 +73,7 @@ spec:
     spec:
       containers:
         - name: warehouse
-          image: <add your repository here>/warehouse:latest
+          image: dambott/warehouse:latest
           imagePullPolicy: Always
           command:
             - "python3"
