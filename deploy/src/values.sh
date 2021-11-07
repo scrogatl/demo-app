@@ -1,7 +1,11 @@
-export K8S_NAMESPACE=tacocat
-export K8S_APPLICATION=tacocat
-export K8S_CLUSTER=cluster1
-export K8S_LOCATION=americas
+export K8S_NAMESPACE=tacocat-homlab
+export K8S_APPLICATION=tacocat-homelab
+export K8S_CLUSTER=homelab
+export K8S_LOCATION=roswell
 export K8S_ENVIRONMENT=dev
-export K8S_REPOSITORY=public.ecr.aws/tanzu_observability_demo_app/to-demo
-export WAVEFRONT_BASE64_TOKEN=<YOUR BASE64 ENCODED TOKEN HERE>
+#export K8S_REPOSITORY=public.ecr.aws/tanzu_observability_demo_app/to-demo
+#export K8S_REPOSITORY=public.ecr.aws/r8e5f6o2/to-demo
+#export K8S_REPOSITORY=192.168.1.8/demo-app
+export K8S_REPOSITORY=public.ecr.aws/z4m0n1r4/to-cf-demo
+export WAVEFRONT_BASE64_TOKEN=OTdhYThlNTAtNzE5Ni00NGI1LWI3Y2MtNjYxMzhjMWU3NTM4
+export WAVEFRONT_URL=ubuntu-463.haas-463.pez.vmware.com
