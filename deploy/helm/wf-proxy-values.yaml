@@ -13,6 +13,7 @@ proxy:
   tracePort: 30000
   jaegerPort: 30001
   zipkinPort: 9411
+  otlpPort: 4317
 
   ## Sampling rate to apply to tracing spans sent to the proxy.
   ## This rate is applied to all data formats the proxy is listening on.

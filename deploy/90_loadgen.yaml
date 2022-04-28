@@ -20,10 +20,12 @@ spec:
     spec:
       containers:
       - name: loadgen
-        image: dambott/arm64loadgen:latest
+        image: dambott/x64loadgen:latest
         imagePullPolicy: Always
         command:
         - "java"
+        - "-javaagent:opentelemetry-javaagent.jar"
+        - "-Dotel.javaagent.configuration-file=/otel/loadgen.properties"
         - "-jar"
         - "/loadgen.jar"
         - "shopping"
@@ -37,3 +39,12 @@ spec:
             memory: 256Mi
           requests:
             memory: 256Mi
+        volumeMounts:
+           - name: otel
+             mountPath: /otel
+      volumes:
+         - name: otel
+           configMap:
+             name: otel-config
+             defaultMode: 0744
+

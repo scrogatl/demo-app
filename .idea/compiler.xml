@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="delivery" />
+        <module name="notification" />
+        <module name="packaging" />
+        <module name="loadgen" />
+        <module name="printing" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="common" target="1.8" />
+      <module name="delivery" target="1.8" />
+      <module name="loadgen" target="1.8" />
+      <module name="notification" target="1.8" />
+      <module name="observability-sample-app" target="1.5" />
+      <module name="packaging" target="1.8" />
+      <module name="printing" target="1.8" />
+      <module name="shopping" target="1.8" />
+      <module name="styling" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

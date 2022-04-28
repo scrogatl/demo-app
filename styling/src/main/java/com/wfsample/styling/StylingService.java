@@ -1,9 +1,5 @@
 package com.wfsample.styling;
 
-import com.wavefront.sdk.dropwizard.reporter.WavefrontDropwizardReporter;
-import com.wavefront.sdk.grpc.WavefrontClientInterceptor;
-import com.wavefront.sdk.grpc.reporter.WavefrontGrpcReporter;
-import com.wavefront.sdk.jersey.WavefrontJerseyFactory;
 import com.wfsample.beachshirts.Color;
 import com.wfsample.beachshirts.PackagingGrpc;
 import com.wfsample.beachshirts.PrintRequest;
@@ -33,10 +29,6 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.opentracing.Scope;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
-import io.opentracing.tag.Tags;
 
 /**
  * Driver for styling service which manages different styles of shirts and takes orders for a shirts
@@ -61,20 +53,24 @@ public class StylingService extends Application<DropwizardServiceConfig> {
         configuration.getInventoryPort();
     String shoppingUrl = "http://" + configuration.getShoppingHost() + ":" +
         configuration.getShoppingPort();
-    WavefrontJerseyFactory factory = new WavefrontJerseyFactory(
+    /*WavefrontJerseyFactory factory = new WavefrontJerseyFactory(
         configuration.getApplicationTagsYamlFile(), configuration.getWfReportingConfigYamlFile());
     WavefrontDropwizardReporter dropwizardReporter = new WavefrontDropwizardReporter.Builder(
         environment.metrics(), factory.getApplicationTags()).
         withSource(factory.getSource()).
         reportingIntervalSeconds(30).
         build(factory.getWavefrontSender());
-    dropwizardReporter.start();
+	*/
+    //dropwizardReporter.start();
+    /*
     WavefrontGrpcReporter grpcReporter = new WavefrontGrpcReporter.Builder(
         factory.getApplicationTags()).
         withSource(factory.getSource()).
         reportingIntervalSeconds(30).
         build(factory.getWavefrontSender());
-    grpcReporter.start();
+	*/
+    //grpcReporter.start();
+    /*
     WavefrontClientInterceptor interceptor =
         new WavefrontClientInterceptor.Builder(grpcReporter, factory.getApplicationTags()).
             withTracer(factory.getTracer()).recordStreamingStats().build();
@@ -84,6 +80,7 @@ public class StylingService extends Application<DropwizardServiceConfig> {
             factory.getWavefrontJaxrsClientFilter()),
         BeachShirtsUtils.createProxyClient(shoppingUrl, ShoppingApi.class,
             factory.getWavefrontJaxrsClientFilter()), factory.getTracer(), interceptor));
+	    */
   }
 
   public class StylingWebResource implements StylingApi {
@@ -91,17 +88,15 @@ public class StylingService extends Application<DropwizardServiceConfig> {
     private final PackagingGrpc.PackagingBlockingStub packaging;
     private final InventoryApi inventoryApi;
     private final ShoppingApi shoppingApi;
-    private final Tracer tracer;
+//    private final Tracer tracer;
     private final AtomicInteger counter = new AtomicInteger(0);
     // sample set of static styles.
     private List<ShirtStyleDTO> shirtStyleDTOS = new ArrayList<>();
 
-    public StylingWebResource(InventoryApi inventoryApi, ShoppingApi shoppingApi,
-                              Tracer tracer,
-                              WavefrontClientInterceptor clientInterceptor) {
+    public StylingWebResource(InventoryApi inventoryApi, ShoppingApi shoppingApi) {
       this.inventoryApi = inventoryApi;
       this.shoppingApi = shoppingApi;
-      this.tracer = tracer;
+//      this.tracer = tracer;
       ShirtStyleDTO dto = new ShirtStyleDTO();
       dto.setName("style1");
       dto.setImageUrl("style1Image");
@@ -112,11 +107,11 @@ public class StylingService extends Application<DropwizardServiceConfig> {
       shirtStyleDTOS.add(dto2);
       ManagedChannel printingChannel = ManagedChannelBuilder.forAddress(
           configuration.getPrintingHost(), configuration.getPrintingPort()).
-          intercept(clientInterceptor).
+//          intercept(clientInterceptor).
           usePlaintext().build();
       ManagedChannel packagingChannel = ManagedChannelBuilder.forAddress(
           configuration.getPackagingHost(), configuration.getPackagingPort()).
-          intercept(clientInterceptor).
+//          intercept(clientInterceptor).
           usePlaintext().build();
       printing = PrintingGrpc.newBlockingStub(printingChannel);
       packaging = PackagingGrpc.newBlockingStub(packagingChannel);
@@ -139,24 +134,27 @@ public class StylingService extends Application<DropwizardServiceConfig> {
     @Override
     public PackedShirtsDTO makeShirts(String id, int quantity) {
       // create the record in database.
+      /*
       Span jdbcSpan = tracer.buildSpan("createRecord").
               withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT).
               withTag(Tags.COMPONENT.getKey(), "java-jdbc").
               withTag(Tags.DB_INSTANCE.getKey(), "stylingDB").
               withTag(Tags.DB_TYPE.getKey(), "postgresql").
               start();
-      try (Scope jdbcScope = tracer.activateSpan(jdbcSpan)) {
+	      */
+      //try (Scope jdbcScope = tracer.activateSpan(jdbcSpan)) {
+      try {
         try {
           Thread.sleep(20);
           if (counter.incrementAndGet() % 110 == 0) {
             throw new RuntimeException();
           }
         } catch (Exception e) {
-          Tags.ERROR.set(jdbcSpan, true);
+//          Tags.ERROR.set(jdbcSpan, true);
           throw new RuntimeException(e);
         }
       } finally {
-        jdbcSpan.finish();
+ //       jdbcSpan.finish();
       }
       try {
         Response checkoutResponse = inventoryApi.checkout(id);

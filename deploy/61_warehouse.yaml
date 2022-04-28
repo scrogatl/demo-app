@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: warehouse
-        image: dambott/arm64warehouse:latest
+        image: dambott/x64warehouse:latest
         imagePullPolicy: Always
         command:
         - "python3"
@@ -58,7 +58,7 @@ metadata:
   name: warehouse-green
   namespace: tacocat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: tacocat
@@ -73,7 +73,7 @@ spec:
     spec:
       containers:
         - name: warehouse
-          image: dambott/arm64warehouse:latest
+          image: dambott/x64warehouse:latest
           imagePullPolicy: Always
           command:
             - "python3"

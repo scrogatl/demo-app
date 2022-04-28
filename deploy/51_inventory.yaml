@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: inventory
-        image: dambott/arm64inventory:latest
+        image: dambott/x64inventory:latest
         imagePullPolicy: Always
         command:
         - "/inventory"
@@ -56,7 +56,7 @@ metadata:
   name: inventory-green
   namespace: tacocat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: tacocat
@@ -71,7 +71,7 @@ spec:
     spec:
       containers:
         - name: inventory
-          image: dambott/arm64inventory:latest
+          image: dambott/x64inventory:latest
           imagePullPolicy: Always
           command:
             - "/inventory"

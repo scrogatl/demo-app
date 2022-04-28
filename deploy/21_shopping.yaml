@@ -23,10 +23,12 @@ spec:
     spec:
       containers:
       - name: shopping
-        image: dambott/arm64shopping:latest
+        image: dambott/x64shopping:latest
         imagePullPolicy: Always
         command:
         - "java"
+        - "-javaagent:opentelemetry-javaagent.jar"
+        - "-Dotel.javaagent.configuration-file=/otel/shopping.blue.properties"
         - "-jar"
         - "/shopping.jar"
         - "server"
@@ -41,6 +43,8 @@ spec:
         volumeMounts:
         - name: conf
           mountPath: /conf
+        - name: otel
+          mountPath: /otel
         resources:
           limits:
             memory: 512Mi
@@ -50,6 +54,10 @@ spec:
       - name: conf
         configMap:
           name: app-config-blue
+          defaultMode: 0744
+      - name: otel
+        configMap:
+          name: otel-config
           defaultMode: 0744
 ---
 apiVersion: apps/v1
@@ -62,7 +70,7 @@ metadata:
   name: shopping-green
   namespace: tacocat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: tacocat
@@ -77,10 +85,12 @@ spec:
     spec:
       containers:
         - name: shopping
-          image: dambott/arm64shopping:latest
+          image: dambott/x64shopping:latest
           imagePullPolicy: Always
           command:
             - "java"
+            - "-javaagent:opentelemetry-javaagent.jar"
+            - "-Dotel.javaagent.configuration-file=/otel/shopping.green.properties"
             - "-jar"
             - "/shopping.jar"
             - "server"
@@ -95,6 +105,8 @@ spec:
           volumeMounts:
             - name: conf
               mountPath: /conf
+            - name: otel
+              mountPath: /otel
           resources:
             limits:
               memory: 512Mi
@@ -104,5 +116,9 @@ spec:
         - name: conf
           configMap:
             name: app-config-green
+            defaultMode: 0744
+        - name: otel
+          configMap:
+            name: otel-config
             defaultMode: 0744
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -7,8 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OpenTracing;
-using OpenTracing.Tag;
 using Payments.Models;
 
 namespace Payments.Controllers
@@ -17,13 +16,11 @@ namespace Payments.Controllers
     public class PaymentsController : Controller
     {
         private readonly Random rand = new Random();
-        private readonly ITracer tracer;
         private readonly HttpClient httpClient;
         private readonly ConcurrentDictionary<string, StrongBox<int>> internalCounters;
 
-        public PaymentsController(ITracer tracer, ConcurrentDictionary<string, StrongBox<int>> internalCounters)
+        public PaymentsController(ConcurrentDictionary<string, StrongBox<int>> internalCounters)
         {
-            this.tracer = tracer;
             this.httpClient = new HttpClient();
             this.internalCounters = internalCounters;
             this.internalCounters.GetOrAdd("authorize", new StrongBox<int>());
@@ -55,23 +52,21 @@ namespace Payments.Controllers
                 throw new ArgumentException($"invalid credit card number: {payment.CreditCardNum}");
             }
 
-            var context = tracer.ActiveSpan.Context;
-            IActionResult result = rand.NextDouble() < 0.5 ? FastPay(context) : ProcessPayment(context);
+            
+            IActionResult result = rand.NextDouble() < 0.5 ? FastPay() : ProcessPayment();
             Thread.Sleep(TimeSpan.FromMilliseconds(Math.Max(RandomGauss(20, 5), 10)));
 
-            var dbTask = SavePaymentAsync(context);
-            var updateTask = UpdateAccountAsync(context);
+            var dbTask = SavePaymentAsync();
+            var updateTask = UpdateAccountAsync();
             Task.Run(async () => await Task.WhenAll(dbTask, updateTask));
             Thread.Sleep(TimeSpan.FromMilliseconds(Math.Max(RandomGauss(10, 2), 5)));
 
             return result;
         }
 
-        private IActionResult FastPay(ISpanContext context)
+        private IActionResult FastPay()
         {
-            using (var scope = tracer.BuildSpan("FastPay")
-                    .AddReference(References.ChildOf, context)
-                    .StartActive())
+     
             {
                 try
                 {
@@ -84,17 +79,15 @@ namespace Payments.Controllers
                 }
                 catch (Exception e)
                 {
-                    LogException(e, null);
+                    LogException(e, "");
                     return StatusCode(StatusCodes.Status500InternalServerError, "fast pay failed");
                 }
             }
         }
 
-        private IActionResult ProcessPayment(ISpanContext context)
+        private IActionResult ProcessPayment()
         {
-            using (var scope = tracer.BuildSpan("ProcessPayment")
-                    .AddReference(References.ChildOf, context)
-                    .StartActive())
+
             {
                 try
                 {
@@ -103,27 +96,25 @@ namespace Payments.Controllers
                     {
                         throw new OutOfMemoryException();
                     }
-                    if (!AuthorizePayment(scope.Span.Context))
+                    if (!AuthorizePayment())
                     {
-                        scope.Span.SetTag(Tags.Error, true);
+                        
                         return StatusCode(StatusCodes.Status500InternalServerError, "payment authorization failed");
                     }
                     Thread.Sleep(TimeSpan.FromMilliseconds(Math.Max(RandomGauss(15, 3), 10)));
-                    return FinishPayment(scope.Span.Context);
+                    return FinishPayment();
                 }
                 catch (Exception e)
                 {
-                    LogException(e, null);
+                    LogException(e, "");
                     return StatusCode(StatusCodes.Status500InternalServerError, "payment processing failed");
                 }
             }
         }
 
-        private bool AuthorizePayment(ISpanContext context)
+        private bool AuthorizePayment()
         {
-            using (var scope = tracer.BuildSpan("AuthorizePayment")
-                    .AddReference(References.ChildOf, context)
-                    .StartActive())
+
             {
                 try
                 {
@@ -143,11 +134,9 @@ namespace Payments.Controllers
             }
         }
 
-        private IActionResult FinishPayment(ISpanContext context)
+        private IActionResult FinishPayment()
         {
-            using (var scope = tracer.BuildSpan("FinishPayment")
-                    .AddReference(References.ChildOf, context)
-                    .StartActive())
+
             {
                 try
                 {
@@ -161,17 +150,15 @@ namespace Payments.Controllers
                 }
                 catch (Exception e)
                 {
-                    LogException(e, null);
+                    LogException(e, "");
                     return StatusCode(StatusCodes.Status500InternalServerError, "finish payment failed");
                 }
             }
         }
 
-        private async Task UpdateAccountAsync(ISpanContext context)
+        private async Task UpdateAccountAsync()
         {
-            using (var scope = tracer.BuildSpan("UpdateAccountAsync")
-                    .AddReference(References.FollowsFrom, context)
-                    .StartActive())
+
             {
                 try
                 {
@@ -184,22 +171,14 @@ namespace Payments.Controllers
                 }
                 catch (Exception e)
                 {
-                    LogException(e, null);
+                    LogException(e, "");
                 }
             }
         }
 
-        private async Task SavePaymentAsync(ISpanContext context)
+        private async Task SavePaymentAsync()
         {
-            using (var scope = tracer.BuildSpan("SavePaymentAsync")
-                    .AddReference(References.FollowsFrom, context)
-                    .WithTag(Tags.SpanKind, Tags.SpanKindClient)
-                    .WithTag(Tags.Component, "java-jdbc")
-                    .WithTag(Tags.DbInstance, "payments-db")
-                    .WithTag(Tags.DbType, "mysql")
-                    .WithTag("peer.address", "payments.wavefront.com:3301")
-                    .WithTag("peer.service", "payments-db[mysql(payments.wavefront.com:3301)]")
-                    .StartActive())
+
             {
                 try
                 {
@@ -211,7 +190,7 @@ namespace Payments.Controllers
                 }
                 catch (Exception e)
                 {
-                    LogException(e, null);
+                    LogException(e, "");
                 }
             }
         }
@@ -222,38 +201,28 @@ namespace Payments.Controllers
         public async Task<IActionResult> GetHealthAsync()
         {
             Thread.Sleep(TimeSpan.FromMilliseconds(Math.Max(RandomGauss(20, 5), 10)));
-            var context = tracer.ActiveSpan.Context;
-            if (await CheckHealthAsync(context))
+
+            if (await CheckHealthAsync())
             {
-                tracer.ActiveSpan.Log(new Dictionary<string, object>
-                {
-                    { LogFields.Message, "Service is healthy" }
-                });
+              
                 return Ok("healthy");
             }
-            tracer.ActiveSpan.Log(new Dictionary<string, object>
-            {
-                { LogFields.Message, "Service is unavailable" }
-            });
+           
             return StatusCode(StatusCodes.Status503ServiceUnavailable, "unavailable");
         }
 
-        private async Task<bool> CheckHealthAsync(ISpanContext context)
+        private async Task<bool> CheckHealthAsync()
         {
-            using (var scope = tracer.BuildSpan("CheckHealthAsync")
-                    .AddReference(References.ChildOf, context)
-                    .StartActive())
+          
             {
                 Thread.Sleep(TimeSpan.FromMilliseconds(Math.Max(RandomGauss(20, 5), 10)));
-                var taskDb = CheckDbHealthAsync(scope.Span.Context);
-                var taskAuth = CheckAuthHealthAsync(scope.Span.Context);
+                var taskDb = CheckDbHealthAsync();
+                var taskAuth = CheckAuthHealthAsync();
                 var results = await Task.WhenAll(taskDb, taskAuth);
                 foreach (bool healthy in results)
                 {
                     if (!healthy)
                     {
-                        scope.Span.SetTag(Tags.Error, true);
-                        scope.Span.Log("Health check failed");
                         return false;
                     }
                 }
@@ -261,34 +230,28 @@ namespace Payments.Controllers
             }
         }
 
-        private async Task<bool> CheckDbHealthAsync(ISpanContext context)
+        private async Task<bool> CheckDbHealthAsync()
         {
-            using (var scope = tracer.BuildSpan("CheckDbHealthAsync")
-                    .AddReference(References.ChildOf, context)
-                    .StartActive())
+          
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(Math.Max(RandomGauss(50, 10), 30)));
                 if (rand.NextDouble() < 0.01)
                 {
-                    scope.Span.SetTag(Tags.Error, true);
-                    scope.Span.Log("Unable to connect to FoundationDB server on '127.0.0.1'");
+                   
                     return false;
                 }
                 return true;
             }
         }
 
-        private async Task<bool> CheckAuthHealthAsync(ISpanContext context)
+        private async Task<bool> CheckAuthHealthAsync()
         {
-            using (var scope = tracer.BuildSpan("CheckAuthHealthAsync")
-                    .AddReference(References.ChildOf, context)
-                    .StartActive())
+
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(Math.Max(RandomGauss(45, 10), 25)));
                 if (rand.NextDouble() < 0.01)
                 {
-                    scope.Span.SetTag(Tags.Error, true);
-                    scope.Span.Log("Unable to connect to authentication server on '127.0.0.1'");
+                    
                     return false;
                 }
                 return true;
@@ -308,24 +271,8 @@ namespace Payments.Controllers
 
         private void LogException(Exception exception, string message)
         {
-            var span = tracer.ActiveSpan;
-            if (span == null)
-            {
-                return;
-            }
 
-            span.SetTag(Tags.Error, true);
-            var fields = new Dictionary<string, object>
-            {
-                { LogFields.Event, Tags.Error.Key },
-                { LogFields.ErrorKind, exception.GetType().Name },
-                { LogFields.ErrorObject, exception }
-            };
-            if (!string.IsNullOrEmpty(message))
-            {
-                fields.Add(LogFields.Message, message);
-            }
-            span.Log(fields);
+            return;
         }
     }
 }

@@ -1,5 +1,32 @@
-#ARCH?=amd64
-ARCH?=arm64
+# BUILDARCH is the host architecture
+# ARCH is the target architecture
+# we need to keep track of them separately
+BUILDARCH ?= $(shell uname -m)
+
+# canonicalized names for host architecture
+ifeq ($(BUILDARCH),aarch64)
+        BUILDARCH=arm64
+endif
+ifeq ($(BUILDARCH),x86_64)
+        BUILDARCH=amd64
+endif
+ifeq ($(BUILDARCH),armv7l)
+        BUILDARCH=armv7
+endif
+
+# unless otherwise set, I am building for my own architecture, i.e. not cross-compiling
+ARCH ?= $(BUILDARCH)
+
+# canonicalized names for target architecture
+ifeq ($(ARCH),aarch64)
+        override ARCH=arm64
+endif
+ifeq ($(ARCH),armv7l)
+        override ARCH=armv7
+endif
+ifeq ($(ARCH),x86_64)
+        override ARCH=amd64
+endif
 OUT_DIR?=./target
 GOLANG_VERSION?=1.11
 

@@ -1,6 +1,5 @@
 package com.wfsample.delivery;
 
-import com.wavefront.sdk.jersey.WavefrontJerseyFactory;
 import com.wfsample.common.BeachShirtsUtils;
 import com.wfsample.service.NotificationApi;
 
@@ -22,11 +21,13 @@ public class DeliveryService {
   }
 
   @Bean
-  public NotificationApi notificationApi(Environment env, WavefrontJerseyFactory factory) {
+  public NotificationApi notificationApi(Environment env ) {
     String notificationUrl = "http://" + env.getProperty("notificationHost") + ":" +
         env.getProperty("notificationPort");
-    return BeachShirtsUtils.createProxyClient(notificationUrl, NotificationApi.class,
-        factory.getWavefrontJaxrsClientFilter());
+    return BeachShirtsUtils.createProxyClient(notificationUrl, NotificationApi.class
+        );
+//    factory.getWavefrontJaxrsClientFilter());
+
   }
 
 }

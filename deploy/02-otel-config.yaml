@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  # Open Telemetry configuration property files
+  name: otel-config
+  namespace: tacocat
+data:
+  delivery.blue.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=delivery
+
+  delivery.green.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=delivery
+
+  loadgen.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=loadgen
+
+  notification.blue.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=notification
+
+  notification.green.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=notification
+
+  packaging.blue.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=packaging
+
+  packaging.green.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=packaging
+
+  printing.blue.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=printing
+
+  printing.green.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=printing
+
+  shopping.blue.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=shopping
+
+  shopping.green.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=shopping
+
+  styling.blue.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=styling
+
+  styling.green.properties: |
+    otel.exporter.otlp.traces.endpoint=http://tacocat-wavefront-proxy:4317
+    otel.exporter.otlp.metrics.endpoint=http://tacocat-wavefront-proxy:2878
+    otel.resource.attributes=process.command_line=x,application=tacocat,cluster=dbott,shard=primary
+    otel.service.name=styling

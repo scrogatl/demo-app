@@ -23,12 +23,12 @@ spec:
     spec:
       containers:
       - name: payments
-        image: dambott/arm64payments:latest
+        image: dambott/x64payments:latest
         imagePullPolicy: Always
         command:
         - "dotnet"
         - "run"
-        - "-p"
+        - "--project"
         - "/payments/src/Payments/"
         ports:
         - containerPort: 50063
@@ -58,7 +58,7 @@ metadata:
   name: payments-green
   namespace: tacocat
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: tacocat
@@ -73,12 +73,12 @@ spec:
     spec:
       containers:
         - name: payments
-          image: dambott/arm64payments:latest
+          image: dambott/x64payments:latest
           imagePullPolicy: Always
           command:
             - "dotnet"
             - "run"
-            - "-p"
+            - "--project"
             - "/payments/src/Payments/"
           ports:
             - containerPort: 50063

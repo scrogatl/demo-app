@@ -2,9 +2,12 @@ package com.wfsample.shopping;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
-import com.wavefront.opentracing.WavefrontSpan;
+//import com.wavefront.opentracing.WavefrontSpan;
+/*
 import com.wavefront.sdk.dropwizard.reporter.WavefrontDropwizardReporter;
 import com.wavefront.sdk.jersey.WavefrontJerseyFactory;
+
+ */
 import com.wfsample.common.BeachShirtsUtils;
 import com.wfsample.common.DropwizardServiceConfig;
 import com.wfsample.common.dto.DeliveryStatusDTO;
@@ -25,9 +28,9 @@ import javax.ws.rs.core.Response;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
-import io.opentracing.Span;
-import io.opentracing.Tracer;
-import io.opentracing.tag.Tags;
+//import io.opentracing.Span;
+//import io.opentracing.Tracer;
+//import io.opentracing.tag.Tags;
 
 /**
  * Driver for Shopping service provides consumer facing APIs supporting activities like browsing
@@ -56,17 +59,23 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
         configuration.getStylingPort();
     String deliveryUrl = "http://" + configuration.getDeliveryHost() + ":" +
         configuration.getDeliveryPort();
+    /*
     WavefrontJerseyFactory factory = new WavefrontJerseyFactory(
         configuration.getApplicationTagsYamlFile(), configuration.getWfReportingConfigYamlFile());
-    WavefrontDropwizardReporter dropwizardReporter = new WavefrontDropwizardReporter.Builder(
-        environment.metrics(), factory.getApplicationTags()).
+    WavefrontDropwizardReporter dropwizardReporter = new WavefrontDropwizardReporter.Builder(environment.metrics(), factory.getApplicationTags()).
         withSource(factory.getSource()).
         reportingIntervalSeconds(30).
         build(factory.getWavefrontSender());
-    dropwizardReporter.start();
-    environment.jersey().register(factory.getWavefrontJerseyFilter());
+    */
+    //dropwizardReporter.start();
+   // environment.jersey().register(factory.getWavefrontJerseyFilter());
     environment.jersey().register(new CORSFilter());
     environment.jersey().register(new ShoppingWebResource(
+            BeachShirtsUtils.createProxyClient(inventoryUrl, InventoryApi.class),
+            BeachShirtsUtils.createProxyClient(paymentsUrl, PaymentsApi.class),
+            BeachShirtsUtils.createProxyClient(stylingUrl, StylingApi.class),
+            BeachShirtsUtils.createProxyClient(deliveryUrl, DeliveryApi.class), environment));
+    /*
         BeachShirtsUtils.createProxyClient(inventoryUrl, InventoryApi.class,
             factory.getWavefrontJaxrsClientFilter()),
         BeachShirtsUtils.createProxyClient(paymentsUrl, PaymentsApi.class,
@@ -74,7 +83,9 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
         BeachShirtsUtils.createProxyClient(stylingUrl, StylingApi.class,
             factory.getWavefrontJaxrsClientFilter()),
         BeachShirtsUtils.createProxyClient(deliveryUrl, DeliveryApi.class,
-            factory.getWavefrontJaxrsClientFilter()), factory.getTracer(), environment));
+            factory.getWavefrontJaxrsClientFilter()),  environment));
+//      factory.getWavefrontJaxrsClientFilter()), factory.getTracer(), environment));
+*/
   }
 
   public class ShoppingWebResource implements ShoppingApi {
@@ -82,18 +93,19 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
     private final PaymentsApi paymentsApi;
     private final StylingApi stylingApi;
     private final DeliveryApi deliveryApi;
-    private final Tracer tracer;
+   // private final Tracer tracer;
     private final MetricRegistry registry;
     private final AtomicInteger updateInventory = new AtomicInteger(0);
     private final AtomicInteger removeFromMenu = new AtomicInteger(0);
 
     public ShoppingWebResource(InventoryApi inventoryApi, PaymentsApi paymentsApi,
-                               StylingApi stylingApi, DeliveryApi deliveryApi, Tracer tracer, Environment env) {
+                               StylingApi stylingApi, DeliveryApi deliveryApi, Environment env) {
+      //StylingApi stylingApi, DeliveryApi deliveryApi, Tracer tracer, Environment env) {
       this.inventoryApi = inventoryApi;
       this.stylingApi = stylingApi;
       this.deliveryApi = deliveryApi;
       this.paymentsApi = paymentsApi;
-      this.tracer = tracer;
+    //  this.tracer = tracer;
       this.registry = env.metrics();
     }
 
@@ -121,29 +133,29 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
       String orderNum = UUID.randomUUID().toString();
       
       int quantity = orderDTO.getQuantity();
-      String styleName = orderDTO.getStyleName();
+      // String styleName = orderDTO.getStyleName();
 
-      String wfTraceId = new String("no trace id");
+      //String wfTraceId = new String("no trace id");
       // System.out.println("------ POINT 15 ------- ");
 
       // persist this as span tag
       // add traceId to response headers
-      Span span = tracer.activeSpan();
-      if (span != null) {
-        span.setTag("orderQuantity", Integer.toString(quantity));
-        span.setTag("orderStyle", styleName);
+      //Span span = tracer.activeSpan();
+      //if (span != null) {
+      //  span.setTag("orderQuantity", Integer.toString(quantity));
+      //  span.setTag("orderStyle", styleName);
         
         // System.out.println(span);
         // WavefrontSpan wfSpan = (WavefrontSpan) span;
         // System.out.println("span.traceId" +  wfSpan.context().toTraceId());
         // wfTraceId = wfSpan.context().toTraceId();
-      }
+      //}
 
       System.out.println("------ POINT 20 ------- ");
       Response inventoryResponse = inventoryApi.available(orderDTO.getStyleName());
       if (inventoryResponse.getStatus() >= 400) {
-        Counter failed = registry.counter("shopping.inventory.failed.quantity");
-        failed.inc((long) quantity);
+      //  Counter failed = registry.counter("shopping.inventory.failed.quantity");
+      //  failed.inc((long) quantity);
         return Response
           .status(inventoryResponse.getStatus())
           .entity("Items out of stock, " + "please try again later")
@@ -152,8 +164,8 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
       System.out.println("------ POINT 30 ------- ");
       Response paymentResponse = paymentsApi.pay(orderNum, orderDTO.getPayment());
       if (paymentResponse.getStatus() >= 400) {
-        Counter failed = registry.counter("shopping.payments.failed.quantity");
-        failed.inc((long) quantity);
+      //  Counter failed = registry.counter("shopping.payments.failed.quantity");
+      //  failed.inc((long) quantity);
         return Response
           .status(paymentResponse.getStatus())
           .entity("Payment not successful, " + "please try again later")
@@ -165,11 +177,13 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
       Response deliveryResponse = deliveryApi.dispatch(orderNum, packedShirts);
       DeliveryStatusDTO deliveryStatus = deliveryResponse.readEntity(DeliveryStatusDTO.class);
       if (deliveryResponse.getStatus() >= 400) {
-        Counter failed = registry.counter("shopping.delivery.failed.quantity");
-        failed.inc((long) quantity);
+        ;
+      //  Counter failed = registry.counter("shopping.delivery.failed.quantity");
+      //  failed.inc((long) quantity);
       } else {
-        Counter success = registry.counter("shopping.delivery.success.quantity");
-        success.inc((long) quantity);
+        ;
+      //  Counter success = registry.counter("shopping.delivery.success.quantity");
+      //  success.inc((long) quantity);
       }
       System.out.println("------ POINT 50 ------- ");
 
@@ -221,12 +235,12 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-      if (removeFromMenu.incrementAndGet() % 11 == 0) {
-        Span span = tracer.activeSpan();
-        if (span != null) {
-          Tags.ERROR.set(span, true);
-        }
-      }
+   //   if (removeFromMenu.incrementAndGet() % 11 == 0) {
+   //     Span span = tracer.activeSpan();
+   //     if (span != null) {
+   //       Tags.ERROR.set(span, true);
+   //     }
+   //   }
       return Response.ok().build();
     }
   }

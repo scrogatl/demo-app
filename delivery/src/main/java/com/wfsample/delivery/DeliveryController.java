@@ -7,11 +7,17 @@ import com.wfsample.common.dto.ShirtDTO;
 import com.wfsample.service.DeliveryApi;
 import com.wfsample.service.NotificationApi;
 
-import io.opentracing.Span;
-import io.opentracing.Tracer;
-import io.opentracing.log.Fields;
-import io.opentracing.rxjava2.TracingObserver;
-import io.opentracing.rxjava2.TracingRxJava2Utils;
+//package io.opentelemetry.example.otlp;
+
+//import io.opentelemetry.api.OpenTelemetry;
+//import io.opentelemetry.api.metrics.LongCounter;
+//import io.opentelemetry.api.metrics.LongHistogram;
+//import io.opentelemetry.api.metrics.Meter;
+//import io.opentelemetry.api.metrics.MeterProvider;
+//import io.opentelemetry.api.trace.Span;
+//import io.opentelemetry.api.trace.Tracer;
+//import io.opentelemetry.context.Scope;
+
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -38,7 +44,16 @@ public class DeliveryController implements DeliveryApi {
   private final AtomicInteger tracking = new AtomicInteger(0);
   private final AtomicInteger dispatch = new AtomicInteger(0);
   private final AtomicInteger cancel = new AtomicInteger(0);
-  private final Tracer tracer;
+
+  // private final Tracer tracer;
+  //System.setProperty("otel.resource.attributes", "service.name=Delivery");
+
+  //OpenTelemetry openTelemetry = ExampleConfiguration.initOpenTelemetry();
+
+  //Tracer tracer = openTelemetry.getTracer("io.opentelemetry.example");
+  //OpenTelemetry openTelemetry = OtelConfiguration.initOpenTelemetry();
+
+  //tracer = openTelemetry.getTracer("io.opentelemetry.example.OtelExample");
 
   private final MemoryLeak memLeak = new MemoryLeak();
   private final int memLeakCycleFrequency = 10;
@@ -46,11 +61,13 @@ public class DeliveryController implements DeliveryApi {
   private Observer<ShirtDTO> dispatchObserver;
   private Observer<String> asyncCleanUpObserver;
 
-  public DeliveryController(Tracer tracer) {
-    this.tracer = tracer;
 
-    TracingRxJava2Utils.enableTracing(tracer);
-    this.dispatchObserver = new TracingObserver<>(new Observer<ShirtDTO>() {
+ // public DeliveryController(Tracer tracer) {
+  public DeliveryController() {
+   // this.tracer = tracer;
+
+    //TracingRxJava2Utils.enableTracing(tracer);
+    this.dispatchObserver = (new Observer<ShirtDTO>() {
       @Override
       public void onSubscribe(Disposable disposable) {
         System.out.println("dispatch started!");
@@ -78,9 +95,10 @@ public class DeliveryController implements DeliveryApi {
         }
         System.out.println("dispatch completed!");
       }
-    }, "dispatchObserver", tracer);
+    });
+    //}, "dispatchObserver");
 
-    this.asyncCleanUpObserver = new TracingObserver<>(new Observer<String>() {
+    this.asyncCleanUpObserver = (new Observer<String>() {
       @Override
       public void onSubscribe(Disposable disposable) {
         System.out.println("clean up started!");
@@ -106,10 +124,10 @@ public class DeliveryController implements DeliveryApi {
         System.out.println("clean up completed!");
 
       }
-    }, "asyncCleanUpObserver", tracer);
+    });
 
 
-  }
+   }
 
   @Override
   public Response dispatch(String orderNum, PackedShirtsDTO packedShirts) {
@@ -138,14 +156,14 @@ public class DeliveryController implements DeliveryApi {
         }
         throw new OutOfMemoryError();
       } catch (Throwable e) {
-        Span span = tracer.activeSpan();
-        if (span != null) {
-          span.log(ImmutableMap.of(
-              Fields.EVENT, "error",
-              Fields.ERROR_KIND, e.getClass().getName(),
-              Fields.STACK, ExceptionUtils.getStackTrace(e)
-          ));
-        }
+  //      Span span = tracer.activeSpan();
+   //     if (span != null) {
+   //       span.log(ImmutableMap.of(
+   //           Fields.EVENT, "error",
+   //           Fields.ERROR_KIND, e.getClass().getName(),
+   //           Fields.STACK, ExceptionUtils.getStackTrace(e)
+   //       ));
+   //     }
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
             new DeliveryStatusDTO(null, "delivery dispatch failed")).build();
       }
@@ -166,11 +184,11 @@ public class DeliveryController implements DeliveryApi {
   @Override
   public Response trackOrder(String orderNum) {
     if (tracking.incrementAndGet() % 8 == 0) {
-      Span span = tracer.activeSpan();
-      if (span != null) {
-        span.log(ImmutableMap.of(Fields.ERROR_KIND, "order number not found", "orderNum",
-            orderNum));
-      }
+//      Span span = tracer.activeSpan();
+ //     if (span != null) {
+ //       span.log(ImmutableMap.of(Fields.ERROR_KIND, "order number not found", "orderNum",
+  //          orderNum));
+  //    }
       return Response.status(Response.Status.BAD_REQUEST).build();
     }
     try {
@@ -189,11 +207,11 @@ public class DeliveryController implements DeliveryApi {
       e.printStackTrace();
     }
     if (cancel.incrementAndGet() % 7 == 0) {
-      Span span = tracer.activeSpan();
-      if (span != null) {
-        span.log(ImmutableMap.of(Fields.ERROR_KIND, "order has already been cancelled", "orderNum",
-            orderNum));
-      }
+  //    Span span = tracer.activeSpan();
+  //    if (span != null) {
+  //      span.log(ImmutableMap.of(Fields.ERROR_KIND, "order has already been cancelled", "orderNum",
+  //          orderNum));
+  //    }
       return Response.status(Response.Status.BAD_REQUEST).build();
     }
     return Response.ok().build();

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/common/common.iml" filepath="$PROJECT_DIR$/common/common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/delivery/delivery.iml" filepath="$PROJECT_DIR$/delivery/delivery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/loadgen/loadgen.iml" filepath="$PROJECT_DIR$/loadgen/loadgen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/notification/notification.iml" filepath="$PROJECT_DIR$/notification/notification.iml" />
+      <module fileurl="file://$PROJECT_DIR$/observability-sample-app.iml" filepath="$PROJECT_DIR$/observability-sample-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/packaging/packaging.iml" filepath="$PROJECT_DIR$/packaging/packaging.iml" />
+      <module fileurl="file://$PROJECT_DIR$/printing/printing.iml" filepath="$PROJECT_DIR$/printing/printing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shopping/shopping.iml" filepath="$PROJECT_DIR$/shopping/shopping.iml" />
+      <module fileurl="file://$PROJECT_DIR$/styling/styling.iml" filepath="$PROJECT_DIR$/styling/styling.iml" />
+    </modules>
+  </component>
+</project>

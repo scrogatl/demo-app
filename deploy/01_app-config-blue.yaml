@@ -113,6 +113,19 @@ data:
     applicationTagsYamlFile: "/conf/printing-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
 
+  shop-ui-app-tags.yaml: |
+    application: tacocat
+    cluster: to-cp-demo-cluster-12
+    service: shop-ui
+    shard: blue
+    customTags:
+      location: eks
+      env: production
+    server:
+      applicationConnectors:
+      - type: http
+      port: 8080
+
   shopping-app-tags.yaml: |
     application: tacocat
     cluster: bare-metal
@@ -143,19 +156,6 @@ data:
     
     applicationTagsYamlFile: "/conf/shopping-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
-
-  shop-ui-app-tags.yaml: |
-    application: tacocat
-    cluster: to-cp-demo-cluster-12
-    service: shop-ui
-    shard: blue
-    customTags:
-      location: eks
-      env: production
-    server:
-      applicationConnectors:
-      - type: http
-      port: 8080
 
   styling-app-tags.yaml: |
     application: tacocat

@@ -1,6 +1,6 @@
 #! /bin/zsh
 
-REPOSITORY_PREFIX=dambott/arm64
+REPOSITORY_PREFIX=dambott/x64
 cd $1
 
 if [ -z "${REPOSITORY_PREFIX}" ]

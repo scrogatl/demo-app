@@ -23,22 +23,20 @@ spec:
     spec:
       containers:
       - name: tacocat-wavefront-proxy
-        #image: wavefronthq/proxy
-        image: dambott/arm64proxy:latest
-        #        imagePullPolicy: IfNotPresent
-        imagePullPolicy: Always
+        image: projects.registry.vmware.com/tanzu_observability/proxy:latest
+        imagePullPolicy: IfNotPresent
         env:
         - name: WAVEFRONT_URL
           value: https://longboard.wavefront.com/api/
         - name: WAVEFRONT_TOKEN
-          value: d6bb5460-02ff-438e-bc9c-9b321ad84093
+          value: 
           #valueFrom:
           #        secretKeyRef:
           #          name: wf-token
           #          key: token
         # Uncomment the below lines to consume Zipkin/Istio traces
         - name: WAVEFRONT_PROXY_ARGS
-          value: --traceListenerPorts 30000
+          value: --traceListenerPorts 30000 --customTracingListenerPorts 30001 --otlpGrpcListenerPorts 4317
           #          value: "--traceJaegerGrpcListenerPorts 30001"
         ports:
         - containerPort: 2878
@@ -46,8 +44,12 @@ spec:
         # Uncomment the below lines to consume traces & histograms
         - containerPort: 30000
           protocol: TCP
-        - containerPort: 40000
+        - containerPort: 30001
           protocol: TCP
+        - containerPort: 4317
+          protocol: TCP
+            #        - containerPort: 40000
+            #          protocol: TCP
           #        - containerPort: 30001
           #protocol: TCP
         securityContext:
@@ -65,9 +67,15 @@ spec:
   - name: wavefront
     port: 2878
     protocol: TCP
+  - name: otlp
+    port: 4317
+    protocol: TCP
   - name: http
     port: 30000
     targetPort: 30000
+  - name: custom
+    port: 30001
+    targetPort: 30001
     protocol: TCP
   - name: histo
     port: 40000

@@ -16,4 +16,5 @@ ADD log4j2-stdout.xml.default /etc/wavefront/wavefront-proxy/log4j2.xml
 EXPOSE 2878
 EXPOSE 30000
 EXPOSE 40000
+EXPOSE 4317
 CMD java -jar proxy.jar -f wavefront.conf
