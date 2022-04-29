@@ -74,13 +74,15 @@ public class StylingService extends Application<DropwizardServiceConfig> {
     WavefrontClientInterceptor interceptor =
         new WavefrontClientInterceptor.Builder(grpcReporter, factory.getApplicationTags()).
             withTracer(factory.getTracer()).recordStreamingStats().build();
-    environment.jersey().register(factory.getWavefrontJerseyFilter());
+
+     */
+    //environment.jersey().register(factory.getWavefrontJerseyFilter());
     environment.jersey().register(new StylingWebResource(
-        BeachShirtsUtils.createProxyClient(inventoryUrl, InventoryApi.class,
-            factory.getWavefrontJaxrsClientFilter()),
-        BeachShirtsUtils.createProxyClient(shoppingUrl, ShoppingApi.class,
-            factory.getWavefrontJaxrsClientFilter()), factory.getTracer(), interceptor));
-	    */
+        BeachShirtsUtils.createProxyClient(inventoryUrl, InventoryApi.class
+            ),
+        BeachShirtsUtils.createProxyClient(shoppingUrl, ShoppingApi.class
+            )));
+
   }
 
   public class StylingWebResource implements StylingApi {
