@@ -676,3 +676,4 @@ MigrationBackup/
 payments/src/Payments/obj/Debug/netcoreapp2.1/*
 payments/src/Payments/obj/Debug/netcoreapp2.1/Payments.assets.cache
 **/.DS_Store
+deploy/10_wavefront.yaml

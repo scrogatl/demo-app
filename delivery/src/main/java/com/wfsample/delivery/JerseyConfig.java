@@ -14,17 +14,17 @@ import javax.ws.rs.ApplicationPath;
  *
  * @author Hao Song (songhao@vmware.com).
  */
-/*
+
 @Component
 @ApplicationPath("/")
 public class JerseyConfig extends ResourceConfig {
 
 
   @Inject
-  public JerseyConfig(WavefrontJerseyFactory wavefrontJerseyFactory) {
-    register(wavefrontJerseyFactory.getWavefrontJerseyFilter());
-    register(new DeliveryController(wavefrontJerseyFactory.getTracer()));
+  public JerseyConfig() {
+  //  register(wavefrontJerseyFactory.getWavefrontJerseyFilter());
+    register(new DeliveryController());
   }
 
 }
-*/
+
