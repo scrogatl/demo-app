@@ -44,6 +44,7 @@ namespace Payments
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+            app.UseRouting();
             app.UseMvc();
         }
     }

@@ -94,6 +94,7 @@ data:
 
   payments-app.yaml: |
     port: 50063
+    proxy: "http://tacocat-wavefront-proxy:4317"
     applicationTagsYamlFile: "/conf/payments-app-tags.yaml"
     wfReportingConfigYamlFile: "/conf/wf-config.yaml"
 

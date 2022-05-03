@@ -45,16 +45,6 @@ public class DeliveryController implements DeliveryApi {
   private final AtomicInteger dispatch = new AtomicInteger(0);
   private final AtomicInteger cancel = new AtomicInteger(0);
 
-  // private final Tracer tracer;
-  //System.setProperty("otel.resource.attributes", "service.name=Delivery");
-
-  //OpenTelemetry openTelemetry = ExampleConfiguration.initOpenTelemetry();
-
-  //Tracer tracer = openTelemetry.getTracer("io.opentelemetry.example");
-  //OpenTelemetry openTelemetry = OtelConfiguration.initOpenTelemetry();
-
-  //tracer = openTelemetry.getTracer("io.opentelemetry.example.OtelExample");
-
   private final MemoryLeak memLeak = new MemoryLeak();
   private final int memLeakCycleFrequency = 10;
 

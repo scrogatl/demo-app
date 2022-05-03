@@ -75,17 +75,6 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
             BeachShirtsUtils.createProxyClient(paymentsUrl, PaymentsApi.class),
             BeachShirtsUtils.createProxyClient(stylingUrl, StylingApi.class),
             BeachShirtsUtils.createProxyClient(deliveryUrl, DeliveryApi.class), environment));
-    /*
-        BeachShirtsUtils.createProxyClient(inventoryUrl, InventoryApi.class,
-            factory.getWavefrontJaxrsClientFilter()),
-        BeachShirtsUtils.createProxyClient(paymentsUrl, PaymentsApi.class,
-            factory.getWavefrontJaxrsClientFilter()),
-        BeachShirtsUtils.createProxyClient(stylingUrl, StylingApi.class,
-            factory.getWavefrontJaxrsClientFilter()),
-        BeachShirtsUtils.createProxyClient(deliveryUrl, DeliveryApi.class,
-            factory.getWavefrontJaxrsClientFilter()),  environment));
-//      factory.getWavefrontJaxrsClientFilter()), factory.getTracer(), environment));
-*/
   }
 
   public class ShoppingWebResource implements ShoppingApi {
@@ -133,7 +122,7 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
       String orderNum = UUID.randomUUID().toString();
       
       int quantity = orderDTO.getQuantity();
-      // String styleName = orderDTO.getStyleName();
+      String styleName = orderDTO.getStyleName();
 
       //String wfTraceId = new String("no trace id");
       // System.out.println("------ POINT 15 ------- ");
@@ -154,8 +143,8 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
       System.out.println("------ POINT 20 ------- ");
       Response inventoryResponse = inventoryApi.available(orderDTO.getStyleName());
       if (inventoryResponse.getStatus() >= 400) {
-      //  Counter failed = registry.counter("shopping.inventory.failed.quantity");
-      //  failed.inc((long) quantity);
+        Counter failed = registry.counter("shopping.inventory.failed.quantity");
+        failed.inc((long) quantity);
         return Response
           .status(inventoryResponse.getStatus())
           .entity("Items out of stock, " + "please try again later")
@@ -164,8 +153,8 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
       System.out.println("------ POINT 30 ------- ");
       Response paymentResponse = paymentsApi.pay(orderNum, orderDTO.getPayment());
       if (paymentResponse.getStatus() >= 400) {
-      //  Counter failed = registry.counter("shopping.payments.failed.quantity");
-      //  failed.inc((long) quantity);
+        Counter failed = registry.counter("shopping.payments.failed.quantity");
+        failed.inc((long) quantity);
         return Response
           .status(paymentResponse.getStatus())
           .entity("Payment not successful, " + "please try again later")
@@ -178,12 +167,12 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
       DeliveryStatusDTO deliveryStatus = deliveryResponse.readEntity(DeliveryStatusDTO.class);
       if (deliveryResponse.getStatus() >= 400) {
         ;
-      //  Counter failed = registry.counter("shopping.delivery.failed.quantity");
-      //  failed.inc((long) quantity);
+        Counter failed = registry.counter("shopping.delivery.failed.quantity");
+        failed.inc((long) quantity);
       } else {
         ;
-      //  Counter success = registry.counter("shopping.delivery.success.quantity");
-      //  success.inc((long) quantity);
+        Counter success = registry.counter("shopping.delivery.success.quantity");
+        success.inc((long) quantity);
       }
       System.out.println("------ POINT 50 ------- ");
 
@@ -235,12 +224,12 @@ public class ShoppingService extends Application<DropwizardServiceConfig> {
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
-   //   if (removeFromMenu.incrementAndGet() % 11 == 0) {
+      if (removeFromMenu.incrementAndGet() % 11 == 0) {
    //     Span span = tracer.activeSpan();
    //     if (span != null) {
    //       Tags.ERROR.set(span, true);
    //     }
-   //   }
+      }
       return Response.ok().build();
     }
   }

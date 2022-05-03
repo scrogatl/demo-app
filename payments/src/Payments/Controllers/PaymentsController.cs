@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Payments.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Payments.Controllers
 {
@@ -17,20 +19,26 @@ namespace Payments.Controllers
     {
         private readonly Random rand = new Random();
         private readonly HttpClient httpClient;
-        private readonly ConcurrentDictionary<string, StrongBox<int>> internalCounters;
+        //private readonly ConcurrentDictionary<string, StrongBox<int>> internalCounters;
 
-        public PaymentsController(ConcurrentDictionary<string, StrongBox<int>> internalCounters)
+      //  public PaymentsController(ConcurrentDictionary<string, StrongBox<int>> internalCounters)
+        public PaymentsController()
         {
             this.httpClient = new HttpClient();
-            this.internalCounters = internalCounters;
-            this.internalCounters.GetOrAdd("authorize", new StrongBox<int>());
+           // this.internalCounters = internalCounters;
+           // this.internalCounters.GetOrAdd("authorize", new StrongBox<int>());
         }
 
         // POST pay
         [Route("pay/{orderNum}")]
-        [HttpPost]
+     //   [HttpPost]
         public IActionResult Pay(string orderNum, Payment payment)
         {
+            ILogger<Program> logger = LoggerFactory
+                                .Create(logging => logging.AddConsole())
+                                .CreateLogger<Program>();
+            logger.LogInformation("Pay starting");
+
             if (rand.NextDouble() < 0.01)
             {
                 string url = $"{Request.Scheme}://{Request.Host.ToUriComponent()}/health";
@@ -52,7 +60,7 @@ namespace Payments.Controllers
                 throw new ArgumentException($"invalid credit card number: {payment.CreditCardNum}");
             }
 
-            
+
             IActionResult result = rand.NextDouble() < 0.5 ? FastPay() : ProcessPayment();
             Thread.Sleep(TimeSpan.FromMilliseconds(Math.Max(RandomGauss(20, 5), 10)));
 
@@ -119,7 +127,9 @@ namespace Payments.Controllers
                 try
                 {
                     Thread.Sleep(TimeSpan.FromMilliseconds(Math.Max(RandomGauss(100, 25), 50)));
-                    if (Interlocked.Increment(ref internalCounters["authorize"].Value) % 5 == 0)
+                   // if (Interlocked.Increment(ref internalCounters["authorize"].Value) % 5 == 0)
+                   Random r = new Random();
+                    if (r.Next(1,5) ==5)
                     {
                         Thread.Sleep(TimeSpan.FromMilliseconds(15000));
                         throw new TimeoutException();
@@ -190,7 +200,7 @@ namespace Payments.Controllers
                 }
                 catch (Exception e)
                 {
-                    LogException(e, "");
+                    LogException(e, "SavePaymentAsync");
                 }
             }
         }
@@ -271,7 +281,10 @@ namespace Payments.Controllers
 
         private void LogException(Exception exception, string message)
         {
-
+            ILogger<Program> logger = LoggerFactory
+                    .Create(logging => logging.AddConsole())
+                    .CreateLogger<Program>();
+            logger.LogInformation("Error: {exception} Msg: {message}", exception, message);
             return;
         }
     }
